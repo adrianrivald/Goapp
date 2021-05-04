@@ -28,11 +28,10 @@ const setSession = (token: number, username: string, otp_code: string) => {
   });
 };
 
-const getSessionToken = () => {
+const getSessionToken = (req) => {
   let token;
   if (process.env.NODE_ENV === 'development') {
-    token = 45115823594568
-  } 
+    token = req.cookies._coin_goapp_dev;  } 
   return Number(token || process.env.API_KEY);
 };
 
@@ -104,9 +103,9 @@ const checkSession = async (from: string, needLogin: boolean) => {
 
 export default {
   getSessionToken,
-  getSessionUsername,
-  getSessionOtp,
-  removeSession,
-  checkSession,
-  setSession,
+  // getSessionUsername,
+  // getSessionOtp,
+  // removeSession,
+  // checkSession,
+  // setSession,
 };

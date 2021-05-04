@@ -65,6 +65,17 @@
         @media only screen and (min-width: 480px) {
         width: 480px;
         }
+        .login-first {
+            text-align: center;
+        }
+        .logged-in {
+            text-align: center;
+            margin-top: 150px;
+            p {
+                color: #0e4d71;
+                cursor: pointer;
+            }
+        }
         .top {
             padding: 20px;
             text-align: right;
@@ -79,6 +90,9 @@
         }
         .input {
             padding: 20px;
+        }
+        .error {
+            color: red;
         }
         .submit {
             text-align: center;

@@ -14,6 +14,7 @@ interface HeaderProps {
   name: string;
   style?: CSSProperties;
   toggleLogin: (e: any) => void;
+  goToCart: (e: any) => void;
 }
 
 const Header = (Props: HeaderProps) => {
@@ -27,7 +28,8 @@ const Header = (Props: HeaderProps) => {
     name,
     style,
     clickImage,
-    toggleLogin
+    toggleLogin,
+    goToCart
   } = Props;
   const router = useRouter();
   
@@ -41,7 +43,7 @@ const Header = (Props: HeaderProps) => {
             <SearchBar placeholder="Cari di GoFit Apparel" onFocus={onFocus} value={value} name={name} onChange={onChange}/>
             <div className={`${styles['icon']}`}>
               <div className={`${styles['cart']}`}>
-                  <img src={cartImage} onClick={() =>router.push('/cart')}/>
+                  <img src={cartImage} onClick={goToCart}/>
               </div>
               <div className={`${styles['login']}`} onClick={toggleLogin}>
                   <img src={loginImage} />

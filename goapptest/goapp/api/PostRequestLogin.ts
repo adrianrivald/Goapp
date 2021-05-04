@@ -25,6 +25,7 @@ const result: any = await axios
       return data;
     })
     .catch((error) =>{
+      console.log(error,'error')
     });
   return result;
 };

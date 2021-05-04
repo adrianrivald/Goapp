@@ -9,16 +9,19 @@ import Link from 'next/link';
 
 interface AddressModalProps {
     popupHandler: (e:any) => void;
-    usernameHandleChange: (e:any) => void;
-    otpHandleChange: (e:any) => void;
+    handleChange: (e:any) => void;
     loginHandler: (e:any) => void;
+    logoutHandler: (e:any) => void;
     action: boolean;
+    isError: boolean;
+    isLoginFirst: boolean;
+    isLoggedIn: string;
     email: string;
     otpCode: string;
   }
 
 const LoginModal: FC<AddressModalProps> = (props) => {
-    const { action, popupHandler, usernameHandleChange, otpHandleChange, loginHandler, email, otpCode} = props;
+    const { action, isError, popupHandler, handleChange, loginHandler, logoutHandler, isLoggedIn, email, otpCode, isLoginFirst} = props;
   
     return (
     <div className={`${styles[`login-modal`]} ${action ? styles['show'] : styles['']}`}>
@@ -27,6 +30,20 @@ const LoginModal: FC<AddressModalProps> = (props) => {
             <div className={`${styles['top']}`}>
                 <FontAwesomeIcon icon={faTimes} style={{cursor: 'pointer'}} onClick={popupHandler}/>
             </div>
+            {
+                isLoginFirst ? 
+                <div className={`${styles['login-first']}`}>
+                    Login sebelum masuk ke keranjang
+                </div> :
+                null
+            }
+            {
+            isLoggedIn ? 
+            <div className={`${styles['logged-in']}`}> 
+                <h1>Anda telah login</h1>
+                <p onClick={logoutHandler}>Logout</p>
+            </div> :
+            <>
             <div className={`${styles['title']}`}>
                 <h1>Login</h1>
             </div>
@@ -35,17 +52,23 @@ const LoginModal: FC<AddressModalProps> = (props) => {
                     value={email}
                     placeholder="Masukkan alamat email"
                     label="Alamat Email"
-                    onChange={usernameHandleChange}
+                    onChange={handleChange}
                     name="username"
                 />
                 <MaterialTextField
                     value={otpCode}
                     placeholder="Masukkan otp Code"
                     label="OTP Code"
-                    onChange={otpHandleChange}
+                    onChange={handleChange}
                     name="otp_code"
-                />
-            </div>
+                /> 
+                {
+                    isError ?
+                    <div className={`${styles['error']}`}>
+                        OTP Salah
+                    </div> : null
+                }
+            </div> 
             <div className={`${styles['submit']}`}>
                 <button className={`${styles['button']}`} onClick={loginHandler}>Submit</button>
             </div>
@@ -57,6 +80,8 @@ const LoginModal: FC<AddressModalProps> = (props) => {
                     </Link>
                 </span>
             </div>
+            </>
+            }
         </div>
     </div>
   );

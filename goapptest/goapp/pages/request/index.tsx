@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { useRouter } from 'next/dist/client/router'
+import { Router, useRouter } from 'next/dist/client/router'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -17,7 +17,7 @@ const Request = ({
 token
 } :InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const [ request, setRequest] = useState({} as AuthModelType)
-
+    const router = useRouter();
   useEffect(()=>{
     // Auth.checkSession('/', false);
 
@@ -33,6 +33,12 @@ token
   const requestOtp = () => {
       PostRequestLogin(request, token).then((result)=> {
           console.log(result,'apanirequ')
+          if(result.status === 'sent'){
+              alert('OTP Requested, check your email')
+              router.push('/')
+          }
+      }).catch((e)=>{
+        console.log(e,'error')
       })
   }
 
@@ -41,7 +47,7 @@ token
         <MaterialTextField
             label="Email"
             placeholder="Masukkan email Anda"
-            name="otp_request"
+            name="address"
             value={request.address}
             onChange={usernameHandleChange}
         />
@@ -51,8 +57,8 @@ token
     </div>
   )
 }
-export const getServerSideProps: GetServerSideProps = async () => {
-    const token: number = Auth.getSessionToken();
+export const getServerSideProps: GetServerSideProps = async ({req}) => {
+    const token: number = Auth.getSessionToken(req);
   
     return {
       props: {

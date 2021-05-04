@@ -37,7 +37,8 @@ const Home = ({
   const [search, setSearch] = useState('');
   const [isSearch, setIsSearch] = useState(false);
   const [isSearchTyped, setIsSearchTyped] = useState(false);
-  const [isSearched, setIsSearched] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isLoginFirst, setIsLoginFirst] = useState(false)
   const [toggleCart, setToggleCart] = useState(false)
   const [toggleAddress, setToggleAddress] = useState(false)
   const [toggleLogin, setToggleLogin] = useState(false)
@@ -51,16 +52,19 @@ const Home = ({
   const dispatch = useDispatch();
   const [orderCounter, setOrderCounter] = useState(productQuantity || 0);
   const [orderPrice, setOrderPrice] = useState(productPrice || 0);
+  let resultToken = '';
   const cookies = new Cookies();
-  const cookie_username: string = process.env.username!;
-  const cookie_otp: string = process.env.otp_code!;
-  const [ usernameInput , setUsernameInput ] = useState('')
-  const [ otpInput , setOtpInput ] = useState('')
+  const cookie_username: string = process.env.COOKIE_USERNAME!;
+  const cookie_token: string = process.env.COOKIE_TOKEN!;
+  const tokenLogin = cookies.get(cookie_token);
+  const usernameLogin = cookies.get(cookie_username);
+  const [loginInput, setLoginInput] = useState({} as UserModelType);
+  const dateExpired = new Date();
+  dateExpired.setFullYear(dateExpired.getFullYear() + 1);
   console.log(productDataList, 'apani')
 
   useEffect(()=>{
-    // Auth.checkSession('/', false);
-
+    console.log(tokenLogin,usernameLogin,'apanitoken')
   },[])
 
   const onChange = (e: any) => {
@@ -99,6 +103,15 @@ const Home = ({
     dispatch(addProductPrice(0));
   };
 
+  const goToCart =() => {
+    if(tokenLogin) {
+      router.push('/cart')
+    } else {
+      setIsLoginFirst(true)
+      setToggleLogin(!toggleLogin)
+    }
+  }
+
   const addToCart = (i:number, counter: number, price: number) => {
     const items = productDataList.map((item) => Object.assign({}, item));
     items[i].count = Number(counter);
@@ -111,28 +124,43 @@ const Home = ({
     console.log(parseInt(orderPriceConverted), orderCounter, orderPrice, 'apaniiiredux')
   }
 
-  const usernameHandleChange = (e: any) => {
+  const handleChange = (e: any) => {
     e.preventDefault();
-    const { value } = e.target;
-    setUsernameInput(value);
-    console.log(value, 'apanilogin')
-  };
-
-  const otpHandleChange = (e: any) => {
-    e.preventDefault();
-    const { value } = e.target;
-    setOtpInput(value);
+    const { value, name } = e.target;
+    setLoginInput((multipleInput) => ({ ...multipleInput, [name]: value }));
     console.log(value, 'apanilogin')
   };
 
   const loginHandler = () => {
    
-      PostLogin(usernameInput, otpInput, token).then((result) => {
+      PostLogin(loginInput, token).then((result) => {
+        if(result){
+          alert('Login Sukses!')
+          resultToken = result.token;
+          console.log(result.token, 'apanitoken')
+          setIsError(false)
+          window.location.href = '/'
+        } else {
+          setIsError(true)
+        }
         console.log(result, 'apaniresultlogin')
+      }).catch((e)=>{
+        console.log(e,'error')
+      }).finally(()=>{
+        cookies.set(cookie_token, resultToken, {
+          path: '/',
+          expires: dateExpired
+        });
       })
 
   }
 
+  const logoutHandler = () => {
+      // Auth.removeSession();
+      cookies.remove(cookie_token);
+      cookies.remove(cookie_username);
+      router.reload()
+  }
 //   const cartModal = () => {
 //     return (
 //         <div className={`cart-modal ${toggleCart ? 'show' : ''}`}>
@@ -223,6 +251,7 @@ const Home = ({
           style={isSearch ? imageStyle : null}
           clickImage={isSearch ? clickImage : () => router.push('/')}
           toggleLogin={showLogin}
+          goToCart={goToCart}
         />
 
         {/* Login Modal */}
@@ -230,17 +259,20 @@ const Home = ({
           popupHandler={showLogin}
           action={toggleLogin}
           loginHandler={loginHandler}
-          email={usernameInput}
-          otpCode={otpInput}
-          usernameHandleChange={usernameHandleChange}
-          otpHandleChange={otpHandleChange}
+          email={loginInput.username}
+          otpCode={loginInput.otp_code}
+          handleChange={handleChange}
+          isLoggedIn={tokenLogin}
+          logoutHandler={logoutHandler}
+          isError={isError}
+          isLoginFirst={isLoginFirst}
         />
     </div>
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const token: number = Auth.getSessionToken();
+export const getServerSideProps: GetServerSideProps = async ({req}) => {
+  const token: number = Auth.getSessionToken(req);
   const nameLogo: NameLogoModelType = await GetNameAndLogo(token);
   const productData: ProductDetailModelType[] = await GetProduct(token,'');
 
