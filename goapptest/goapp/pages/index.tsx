@@ -27,6 +27,7 @@ import { LinesModelType } from '../models/CartModel'
 import { addCartItem } from '../store/cart/action'
 import { GetUserInfo } from '../api/GetUserInfo'
 import { TokenModelType } from '../models/TokenModel'
+import Popup from '../components/atom/popup/Popup'
 
 
 const Home = ({
@@ -41,7 +42,7 @@ const Home = ({
   const [isSearchTyped, setIsSearchTyped] = useState(false);
   const [isError, setIsError] = useState(false);
   const [isLoginFirst, setIsLoginFirst] = useState(false)
-  const [toggleCart, setToggleCart] = useState(false)
+  const [isAddToCart, setIsAddToCart] = useState(false)
 
   const [toggleLogin, setToggleLogin] = useState(false)
   const router = useRouter();
@@ -88,6 +89,7 @@ const Home = ({
 
   const showLogin = () => {
     setToggleLogin(!toggleLogin)
+    setIsLoginFirst(false)
   }
 
   const imageStyle = {
@@ -120,11 +122,18 @@ const Home = ({
     // dispatch(addProductQuantity(orderCounter));
     // dispatch(addProductPrice(parseInt(orderPriceConverted)));
     // console.log(parseInt(orderPriceConverted), orderCounter, orderPrice, 'apaniiiredux')
-    
-    PostAddToCart(uid, quantity + 1, token, tokenLogin).then((result)=> {
-
-      console.log(result, 'apaniaddtocart')
-    })
+    if(tokenLogin) {
+      PostAddToCart(uid, quantity + 1, token, tokenLogin).then((result)=> {
+        setIsAddToCart(true)
+          setTimeout(() => {
+            setIsAddToCart(false)
+          }, 5000);
+        console.log(result, 'apaniaddtocart')
+      })
+    } else {
+      setIsLoginFirst(true)
+      setToggleLogin(!toggleLogin)
+    }
   }
 
   const handleChange = (e: any) => {
@@ -244,7 +253,7 @@ const Home = ({
         {/* Floating header */}
         <Header
           value={search} 
-          logoImage={!isSearch ? nameAndLogo.logo.image_url : "https://d29fhpw069ctt2.cloudfront.net/icon/image/39092/preview.png"} 
+          logoImage={nameAndLogo.logo.image_url} 
           cartImage="https://icons.iconarchive.com/icons/iconsmind/outline/512/Shopping-Cart-icon.png"
           loginImage="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
           onChange={onChange} 
@@ -254,6 +263,7 @@ const Home = ({
           clickImage={isSearch ? clickImage : () => router.push('/')}
           toggleLogin={showLogin}
           goToCart={goToCart}
+          isSearch={isSearch}
         />
 
         {/* Login Modal */}
@@ -269,6 +279,15 @@ const Home = ({
           isError={isError}
           isLoginFirst={isLoginFirst}
         />
+
+        {/* Popup AddtoCart */}
+        {
+          isAddToCart ?
+            <Popup
+              value="Success add to cart"
+              icon="https://lh3.googleusercontent.com/proxy/S2cE_uwPmIwKE_bBxIF54C_21HHjMhe18AIwWJhNP6AAd6m9R6NSC8QFEmNR7gei4zNdwYNulcA5Sgyt6anwBqqRAPUT-rR7HtiT6uAXimnqLB6-VeM2RYV2Ua4bitWqNA"
+            /> : null
+        }
     </div>
   )
 }

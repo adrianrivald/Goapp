@@ -1,3 +1,5 @@
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/dist/client/router';
 import React, { CSSProperties } from 'react';
 import SearchBar from '../../atom/searchBar/SearchBar';
@@ -15,6 +17,7 @@ interface HeaderProps {
   style?: CSSProperties;
   toggleLogin: (e: any) => void;
   goToCart: (e: any) => void;
+  isSearch: boolean
 }
 
 const Header = (Props: HeaderProps) => {
@@ -29,7 +32,8 @@ const Header = (Props: HeaderProps) => {
     style,
     clickImage,
     toggleLogin,
-    goToCart
+    goToCart,
+    isSearch
   } = Props;
   const router = useRouter();
   
@@ -38,8 +42,13 @@ const Header = (Props: HeaderProps) => {
     <div className={`${styles['header']}`}>
         <div className={`${styles['header-content']}`}>
             <div className={`${styles['logo']}`} onClick={clickImage}>
+              {
+                isSearch ? 
+                <FontAwesomeIcon icon={faArrowLeft} style={{color: '#0e4d71', fontSize: '30px'}} />
+                :
                 <img src={logoImage} style={style} />
-            </div>
+              }
+              </div>
             <SearchBar placeholder="Cari di GoFit Apparel" onFocus={onFocus} value={value} name={name} onChange={onChange}/>
             <div className={`${styles['icon']}`}>
               <div className={`${styles['cart']}`}>
