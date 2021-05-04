@@ -1,34 +1,22 @@
+import { LinesModelType } from '../../models/CartModel';
 import { ProductModelType } from '../../models/ProductModel';
-import { ProductActionTypes, ProductStateType } from './type';
+import { CartActionTypes, CartStateType } from './type';
 
 
-export const productInitialState: ProductStateType = {
-  productDataList: {} as ProductModelType,
-  productUid: 0 as number,
-  productQuantity: 0 as number,
-  productPrice: 0 as number
+export const cartInitialState: CartStateType = {
+  cartData: {} as LinesModelType
 };
 
 export function productReducer(
-  state = productInitialState,
-  action: ProductActionTypes
+  state = cartInitialState,
+  action: CartActionTypes
 ) {
   switch (action.type) {
-    case 'ADD_PRODUCT_UID':
+    case 'ADD_CART_DATA':
       return {
         ...state,
-        productBuyId: action.payload,
+        carData: action.payload,
       };
-    case 'ADD_PRODUCT_QUANTITY' :
-      return {
-        ...state,
-        productQuantity : action.payload,
-      }
-    case 'ADD_PRODUCT_PRICE' :
-      return {
-        ...state,
-        productPrice : action.payload,
-      }
     default:
       return state;
   }

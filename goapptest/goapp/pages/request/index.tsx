@@ -9,7 +9,7 @@ import styles from './Request.module.scss'
 import Cookies from 'universal-cookie';
 import MaterialTextField from '../../components/atom/materialTextInput/MaterialTextInput'
 import { PostRequestLogin } from '../../api/PostRequestLogin'
-import Auth from '../../auth/Auth'
+// import Auth from '../../auth/Auth'
 import { AuthModelType } from '../../models/UserModel'
 
 
@@ -57,8 +57,8 @@ token
     </div>
   )
 }
-export const getServerSideProps: GetServerSideProps = async ({req}) => {
-    const token: number = Auth.getSessionToken(req);
+export const getServerSideProps: GetServerSideProps = async () => {
+  const token: number = Number(process.env.API_KEY);
   
     return {
       props: {

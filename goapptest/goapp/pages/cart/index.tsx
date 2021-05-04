@@ -2,13 +2,15 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import Cookies from 'universal-cookie'
 import { GetCart } from '../../api/GetCart'
 import { GetNameAndLogo } from '../../api/GetNameAndLogo'
-import Auth from '../../auth/Auth'
+// import Auth from '../../auth/Auth'
 import Header from '../../components/molecules/header/Header'
 import { CartModelType, LinesModelType } from '../../models/CartModel'
 import { NameLogoModelType } from '../../models/NameLogoModel'
+import { StoreStateType } from '../../store'
 import styles from './Cart.module.scss'
 
 const Cart = ({
@@ -22,17 +24,21 @@ const Cart = ({
   const cookie_token: string = process.env.COOKIE_TOKEN!;
   const tokenLogin = cookies.get(cookie_token);
   const usernameLogin = cookies.get(cookie_username);
+  // const {
+  //   cartData
+  // } = useSelector((state: StoreStateType) => state.cart);
   
     useEffect(()=>{
       if(tokenLogin || usernameLogin) {
         GetCart(token,tokenLogin).then((result)=> {
           setCart(result)
           setCartItem(result.lines)
-          console.log(result.lines,'apanicart')
+          console.log(result,'apanicart')
         })
       } else {
         emptyState();
       }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
     const emptyState = () => {
@@ -60,8 +66,8 @@ const Cart = ({
         </div>
     )
 }
-export const getServerSideProps: GetServerSideProps = async ({req}) => {
-  const token: number = Auth.getSessionToken(req);
+export const getServerSideProps: GetServerSideProps = async () => {
+  const token: number = Number(process.env.API_KEY);
   const nameLogo: NameLogoModelType = await GetNameAndLogo(token);
   
     return {

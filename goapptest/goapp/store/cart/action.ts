@@ -1,26 +1,11 @@
+import { LinesModelType } from '../../models/CartModel';
 import {
-  ADD_PRODUCT_UID,
-  ADD_PRODUCT_QUANTITY,
-  ADD_PRODUCT_PRICE
+  ADD_CART_DATA
 } from './type';
 
-export function addProductId(data: number) {
+export function addCartItem(data: LinesModelType) {
   return {
-    type: ADD_PRODUCT_UID,
-    payload: data,
-  };
-}
-
-export function addProductQuantity(data: number) {
-  return {
-    type: ADD_PRODUCT_QUANTITY,
-    payload: data,
-  };
-}
-
-export function addProductPrice(data: number) {
-  return {
-    type: ADD_PRODUCT_PRICE,
+    type: ADD_CART_DATA,
     payload: data,
   };
 }

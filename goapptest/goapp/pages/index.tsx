@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { GetNameAndLogo } from '../api/GetNameAndLogo'
 import { GetProduct } from '../api/GetProduct'
 import { PostLogin } from '../api/PostLogin'
-import Auth from '../auth/Auth'
 import ProductCard from '../components/atom/productCard/ProductCard'
 import SliderGallery from '../components/atom/slider/SliderGallery'
 import Header from '../components/molecules/header/Header'
@@ -18,13 +17,14 @@ import ProductList from '../components/molecules/productList/ProductList'
 import { bannerData } from '../helpers/bannerDataList'
 import { priceToRupiah } from '../helpers/priceToRupiah'
 import { NameLogoModelType } from '../models/NameLogoModel'
-import { OriginalPriceModelType, ProductDetailModelType, ProductModelType } from '../models/ProductModel'
+import { ProductDetailModelType } from '../models/ProductModel'
 import { StoreStateType } from '../store'
-import { addProductPrice, addProductQuantity } from '../store/cart/action'
-import { ProductStateType } from '../store/cart/type'
 import styles from '../styles/Home.module.scss'
 import Cookies from 'universal-cookie';
 import { UserModelType } from '../models/UserModel'
+import { PostAddToCart } from '../api/PostAddToCart'
+import { LinesModelType } from '../models/CartModel'
+import { addCartItem } from '../store/cart/action'
 
 
 const Home = ({
@@ -40,18 +40,10 @@ const Home = ({
   const [isError, setIsError] = useState(false);
   const [isLoginFirst, setIsLoginFirst] = useState(false)
   const [toggleCart, setToggleCart] = useState(false)
-  const [toggleAddress, setToggleAddress] = useState(false)
+
   const [toggleLogin, setToggleLogin] = useState(false)
   const router = useRouter();
-  const {
-    // productDataList,
-    productUid,
-    productQuantity,
-    productPrice,
-  } = useSelector((state: StoreStateType) => state.product);
   const dispatch = useDispatch();
-  const [orderCounter, setOrderCounter] = useState(productQuantity || 0);
-  const [orderPrice, setOrderPrice] = useState(productPrice || 0);
   let resultToken = '';
   const cookies = new Cookies();
   const cookie_username: string = process.env.COOKIE_USERNAME!;
@@ -59,12 +51,14 @@ const Home = ({
   const tokenLogin = cookies.get(cookie_token);
   const usernameLogin = cookies.get(cookie_username);
   const [loginInput, setLoginInput] = useState({} as UserModelType);
+  const [cartItem, setCartItem] = useState({} as LinesModelType)
   const dateExpired = new Date();
   dateExpired.setFullYear(dateExpired.getFullYear() + 1);
   console.log(productDataList, 'apani')
 
   useEffect(()=>{
     console.log(tokenLogin,usernameLogin,'apanitoken')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
   const onChange = (e: any) => {
@@ -83,7 +77,6 @@ const Home = ({
   }
 
   const showLogin = () => {
-    console.log(toggleAddress,'address')
     setToggleLogin(!toggleLogin)
   }
 
@@ -97,11 +90,6 @@ const Home = ({
     setSearch('')
     router
   }
-  const removeData = () => {
-    console.log('saved di hapus');
-    dispatch(addProductQuantity(0));
-    dispatch(addProductPrice(0));
-  };
 
   const goToCart =() => {
     if(tokenLogin) {
@@ -112,16 +100,26 @@ const Home = ({
     }
   }
 
-  const addToCart = (i:number, counter: number, price: number) => {
-    const items = productDataList.map((item) => Object.assign({}, item));
-    items[i].count = Number(counter);
-    const { uid, original_price } = productDataList[i];
-    const orderPriceConverted = original_price.price.toString()
-    setOrderCounter(orderCounter + counter);
-    setOrderPrice(parseInt(orderPriceConverted) + orderPrice);
-    dispatch(addProductQuantity(orderCounter));
-    dispatch(addProductPrice(parseInt(orderPriceConverted)));
-    console.log(parseInt(orderPriceConverted), orderCounter, orderPrice, 'apaniiiredux')
+  const addToCart = (uid: number, quantity: number) => {
+    // const items = productDataList.map((item) => Object.assign({}, item));
+    // items[i].count = Number(counter);
+    // const { uid, original_price } = productDataList[i];
+    // const orderPriceConverted = original_price.price.toString()
+    // setOrderCounter(orderCounter + counter);
+    // setOrderPrice(parseInt(orderPriceConverted) + orderPrice);
+    // dispatch(addProductQuantity(orderCounter));
+    // dispatch(addProductPrice(parseInt(orderPriceConverted)));
+    // console.log(parseInt(orderPriceConverted), orderCounter, orderPrice, 'apaniiiredux')
+    setCartItem({
+      product: {
+        uid: uid
+      } ,
+      quantity: quantity
+    })
+    PostAddToCart(cartItem, token, tokenLogin).then((result)=> {
+      dispatch(addCartItem(cartItem))
+      console.log(result, 'apaniaddtocart')
+    })
   }
 
   const handleChange = (e: any) => {
@@ -146,11 +144,11 @@ const Home = ({
         console.log(result, 'apaniresultlogin')
       }).catch((e)=>{
         console.log(e,'error')
-      }).finally(()=>{
-        cookies.set(cookie_token, resultToken, {
-          path: '/',
-          expires: dateExpired
-        });
+        }).finally(()=>{
+          cookies.set(cookie_token, resultToken, {
+            path: '/',
+            expires: dateExpired
+          });
       })
 
   }
@@ -224,7 +222,7 @@ const Home = ({
                                   <div className={`${styles['product-sold']}`}>Terjual | {result.total_sold}</div>  
                               </div>
                               <div className={`${styles['add-to-cart']}`}>
-                                  <button className={`${styles['button']}`} onClick={() =>addToCart(i, 1, result.original_price.price)}>
+                                  <button className={`${styles['button']}`} onClick={() =>addToCart(result.uid, 1)}>
                                       <FontAwesomeIcon icon={faPlus} style={{width: '20px'}}/>
                                       <span className={`${styles['text']}`}>Add to cart</span>
                                   </button>    
@@ -272,7 +270,7 @@ const Home = ({
 }
 
 export const getServerSideProps: GetServerSideProps = async ({req}) => {
-  const token: number = Auth.getSessionToken(req);
+  const token: number = Number(process.env.API_KEY);
   const nameLogo: NameLogoModelType = await GetNameAndLogo(token);
   const productData: ProductDetailModelType[] = await GetProduct(token,'');
 

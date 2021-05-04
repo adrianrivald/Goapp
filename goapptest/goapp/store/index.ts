@@ -4,7 +4,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { useMemo } from 'react';
-import { ProductStateType } from './cart/type';
+import { CartStateType } from './cart/type';
 import { productReducer } from './cart/reducer';
 let store;
 const persistConfig = {
@@ -16,7 +16,7 @@ const exampleInitialState = {
 };
 
 export interface StoreStateType {
-  product: ProductStateType;
+  cart: CartStateType;
 }
 
 const rootReducer = combineReducers({
