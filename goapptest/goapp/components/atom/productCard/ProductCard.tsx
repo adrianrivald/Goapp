@@ -2,14 +2,19 @@ import React, { CSSProperties } from 'react';
 import { priceToRupiah } from '../../../helpers/priceToRupiah';
 import { ProductDetailModelType, ProductModelType } from '../../../models/ProductModel';
 import styles from './ProductCard.module.scss';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import FontAwesome from 'react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 interface ProductCardProps {
   productData: ProductDetailModelType[];
+  addToCart: (i: number, counter: number, price: number) => void;
 }
 
 const ProductCard = (Props: ProductCardProps) => {
   const {
-   productData
+   productData,
+   addToCart
   } = Props;
   
  
@@ -26,6 +31,12 @@ const ProductCard = (Props: ProductCardProps) => {
                             <h1>{result.name}</h1>
                             <div className={`${styles['product-price']}`}>{priceToRupiah(result.original_price.price)}</div> 
                             <div className={`${styles['product-sold']}`}>Terjual | {result.total_sold}</div>  
+                        </div>
+                        <div className={`${styles['add-to-cart']}`}>
+                            <button className={`${styles['button']}`} onClick={() =>addToCart(i, 1 , result.original_price.price)}>
+                                <FontAwesomeIcon icon={faPlus} style={{width: '20px'}}/>
+                                <span className={`${styles['text']}`}>Add to cart</span>
+                            </button>    
                         </div>
                     </div>
                 )

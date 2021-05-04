@@ -6,12 +6,14 @@ import styles from './ProductList.module.scss';
 interface ProductCardProps {
   productData: ProductDetailModelType[];
   value?: string;
+  addToCart : (i:number, counter: number, price:number) => void;
 }
 
 const ProductList = (Props: ProductCardProps) => {
   const {
    productData,
-   value
+   value,
+   addToCart,
   } = Props;
   
  
@@ -20,7 +22,7 @@ const ProductList = (Props: ProductCardProps) => {
         <div className={`${styles['product-section-title']}`} >
             <h1>{value}</h1>
         </div>
-        <ProductCard productData={productData} />
+        <ProductCard productData={productData} addToCart={addToCart}/>
     </div>
   );
 };

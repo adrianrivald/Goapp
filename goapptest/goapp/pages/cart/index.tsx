@@ -13,6 +13,8 @@ const Cart = ({
    nameLogo
 } :InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const [ nameAndLogo ] = useState(nameLogo as NameLogoModelType)
+    // const [ cartDataList ] = useState(cartData as ProductDetailModelType[])
+
     const [search, setSearch] = useState('');
     const [isSearch, setIsSearch] = useState(false);
     const [isSearchTyped, setIsSearchTyped] = useState(false);
@@ -50,19 +52,6 @@ const Cart = ({
     return (
         <div className={`${styles['cart']}`}>
                 
-
-                {/* Floating header */}
-        <Header
-          value={search} 
-          logoImage={!isSearch ? nameAndLogo.logo.image_url : "https://d29fhpw069ctt2.cloudfront.net/icon/image/39092/preview.png"} 
-          cartImage="https://icons.iconarchive.com/icons/iconsmind/outline/512/Shopping-Cart-icon.png"
-          loginImage="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
-          onChange={onChange} 
-          name="search_query" 
-          onFocus={onFocus}
-          style={isSearch ? imageStyle : null}
-          clickImage={isSearch ? clickImage : null}
-        />
         </div>
     )
 }

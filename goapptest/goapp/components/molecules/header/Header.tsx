@@ -13,6 +13,7 @@ interface HeaderProps {
   clickImage: (e: any) => void;
   name: string;
   style?: CSSProperties;
+  toggleLogin: (e: any) => void;
 }
 
 const Header = (Props: HeaderProps) => {
@@ -25,7 +26,8 @@ const Header = (Props: HeaderProps) => {
     onFocus,
     name,
     style,
-    clickImage
+    clickImage,
+    toggleLogin
   } = Props;
   const router = useRouter();
   
@@ -37,11 +39,13 @@ const Header = (Props: HeaderProps) => {
                 <img src={logoImage} style={style} />
             </div>
             <SearchBar placeholder="Cari di GoFit Apparel" onFocus={onFocus} value={value} name={name} onChange={onChange}/>
-            <div className={`${styles['cart']}`}>
-                <img src={cartImage} onClick={() =>router.push('/cart')}/>
-            </div>
-            <div className={`${styles['login']}`}>
-                <img src={loginImage} />
+            <div className={`${styles['icon']}`}>
+              <div className={`${styles['cart']}`}>
+                  <img src={cartImage} onClick={() =>router.push('/cart')}/>
+              </div>
+              <div className={`${styles['login']}`} onClick={toggleLogin}>
+                  <img src={loginImage} />
+              </div>
             </div>
         </div>
     </div>

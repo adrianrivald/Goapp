@@ -21,13 +21,14 @@ export type ProductDetailModelType = {
         total_rating: number;
         total_like: number;
         avg_rating: number;
+        count: number;
         original_price: OriginalPriceModelType;
     }
     
 
 export type OriginalPriceModelType = {
     min_quantity: number;
-    price: string;
+    price: number;
     base_price: string;
     currency: string
 };

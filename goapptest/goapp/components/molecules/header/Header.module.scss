@@ -9,6 +9,7 @@
       align-items: center;
       margin: auto;
       z-index: 10;
+      justify-content: space-around;
       background-color: #fff;
       border-radius: 2px;
       box-shadow: 0 1px 5px 0 hsl(0deg 0% 78% / 25%);
@@ -18,12 +19,16 @@
           width: 100px;
         }
       }
-      .cart, .login {
-        display: block;
-        margin-left: 20px;
-        img {
-          width: 30px;
-          cursor: pointer;
+      .icon {
+        display: flex;
+        float: right;
+        .cart, .login {
+          display: block;
+          margin-left: 20px;
+          img {
+            width: 30px;
+            cursor: pointer;
+          }
         }
       }
       .note-home-icon {

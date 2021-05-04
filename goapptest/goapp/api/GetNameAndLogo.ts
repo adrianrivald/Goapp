@@ -10,7 +10,7 @@ export const GetNameAndLogo = async (
 
   const result: any = await axios
     .get(
-      `https://api.dev.goapp.co.id/v1/directory/api/business/0/`,
+      `${process.env.API_URL}/directory/api/business/0/`,
     )
     .then(({ data }) => {
       console.log('Datatatat', data);

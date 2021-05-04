@@ -12,7 +12,7 @@ export const GetProduct = async (
 
   const result: ProductDetailModelType[] = await axios
     .get(
-      `https://api.dev.goapp.co.id/v1/catalog/api/product/search/?q=${search_query}`,
+      `${process.env.API_URL}/catalog/api/product/search/?q=${search_query}`,
     )
     .then(({ data }) => {
       console.log('Datatatat', data);
