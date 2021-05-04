@@ -3,7 +3,8 @@ import { CartModelType, LinesModelType } from '../models/CartModel';
 import { UserModelType } from '../models/UserModel';
 
 export const PostAddToCart = async (
-  data: LinesModelType,
+  uid: number,
+  quantity: number,
   token: number,
   tokenLogin: number
 ) => {
@@ -23,8 +24,14 @@ const result: any = await axios
     .put(
       `https://api.dev.goapp.co.id/v1/sales/api/cart/0/`, 
         {
-          product: data.product,
-          quantity: data.quantity
+          lines : [
+            {
+              product: { 
+                  uid: uid 
+            },
+              quantity: quantity
+            }
+          ]
         },
         config
     )

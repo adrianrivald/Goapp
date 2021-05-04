@@ -6,7 +6,7 @@ import styles from './ProductList.module.scss';
 interface ProductCardProps {
   productData: ProductDetailModelType[];
   value?: string;
-  addToCart : (i:number, counter: number, price:number) => void;
+  addToCart: (uid: number, quantity: number) => void;
 }
 
 const ProductList = (Props: ProductCardProps) => {

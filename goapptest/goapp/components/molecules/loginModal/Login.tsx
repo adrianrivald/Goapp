@@ -41,6 +41,9 @@ const LoginModal: FC<AddressModalProps> = (props) => {
             isLoggedIn ? 
             <div className={`${styles['logged-in']}`}> 
                 <h1>Anda telah login</h1>
+                <div className={`${styles['user-info']}`}>
+                    
+                </div>
                 <p onClick={logoutHandler}>Logout</p>
             </div> :
             <>

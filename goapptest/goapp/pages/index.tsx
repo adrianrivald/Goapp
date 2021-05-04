@@ -25,6 +25,8 @@ import { UserModelType } from '../models/UserModel'
 import { PostAddToCart } from '../api/PostAddToCart'
 import { LinesModelType } from '../models/CartModel'
 import { addCartItem } from '../store/cart/action'
+import { GetUserInfo } from '../api/GetUserInfo'
+import { TokenModelType } from '../models/TokenModel'
 
 
 const Home = ({
@@ -51,15 +53,23 @@ const Home = ({
   const tokenLogin = cookies.get(cookie_token);
   const usernameLogin = cookies.get(cookie_username);
   const [loginInput, setLoginInput] = useState({} as UserModelType);
-  const [cartItem, setCartItem] = useState({} as LinesModelType)
   const dateExpired = new Date();
   dateExpired.setFullYear(dateExpired.getFullYear() + 1);
   console.log(productDataList, 'apani')
 
   useEffect(()=>{
+    getUserInfo();
     console.log(tokenLogin,usernameLogin,'apanitoken')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
+
+  const getUserInfo = () => {
+    if(tokenLogin){
+      GetUserInfo(token).then((result)=> {
+        console.log(result, 'apaniuserinfo')
+      })
+    }
+  }
 
   const onChange = (e: any) => {
     e.preventDefault();
@@ -110,14 +120,9 @@ const Home = ({
     // dispatch(addProductQuantity(orderCounter));
     // dispatch(addProductPrice(parseInt(orderPriceConverted)));
     // console.log(parseInt(orderPriceConverted), orderCounter, orderPrice, 'apaniiiredux')
-    setCartItem({
-      product: {
-        uid: uid
-      } ,
-      quantity: quantity
-    })
-    PostAddToCart(cartItem, token, tokenLogin).then((result)=> {
-      dispatch(addCartItem(cartItem))
+    
+    PostAddToCart(uid, quantity + 1, token, tokenLogin).then((result)=> {
+
       console.log(result, 'apaniaddtocart')
     })
   }
@@ -229,7 +234,6 @@ const Home = ({
                               </div>
                             </div>
                       ))
-                      
                       : null
                     }
                 </div>

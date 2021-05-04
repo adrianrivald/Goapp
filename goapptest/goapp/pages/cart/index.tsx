@@ -1,13 +1,15 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { Router, useRouter } from 'next/dist/client/router'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Cookies from 'universal-cookie'
 import { GetCart } from '../../api/GetCart'
 import { GetNameAndLogo } from '../../api/GetNameAndLogo'
 // import Auth from '../../auth/Auth'
 import Header from '../../components/molecules/header/Header'
+import HeaderCart from '../../components/molecules/header/HeaderCart'
 import { CartModelType, LinesModelType } from '../../models/CartModel'
 import { NameLogoModelType } from '../../models/NameLogoModel'
 import { StoreStateType } from '../../store'
@@ -24,9 +26,7 @@ const Cart = ({
   const cookie_token: string = process.env.COOKIE_TOKEN!;
   const tokenLogin = cookies.get(cookie_token);
   const usernameLogin = cookies.get(cookie_username);
-  // const {
-  //   cartData
-  // } = useSelector((state: StoreStateType) => state.cart);
+  const router = useRouter();
   
     useEffect(()=>{
       if(tokenLogin || usernameLogin) {
@@ -35,19 +35,9 @@ const Cart = ({
           setCartItem(result.lines)
           console.log(result,'apanicart')
         })
-      } else {
-        emptyState();
       }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
-
-    const emptyState = () => {
-      return (
-        <div>
-          kosong
-        </div>
-      )
-    }
 
     return (
         <div className={`${styles['cart']}`}>
@@ -55,14 +45,18 @@ const Cart = ({
               {
                 cartItem.map((result)=> {
                   return (
-                    <div>
-                      <h1>{result.product.uid}</h1>
-                      <h1>{result.quantity}</h1>
+                    <div className={`${styles['cart-list-item']}`}>
+                      <h1>UID Product : {result.product.uid}</h1>
+                      <p>Quantity : {result.quantity}</p>
                     </div>
                   )
                 })
               }
             </div>
+
+            <HeaderCart
+              clickImage={() => router.back()}
+            />
         </div>
     )
 }
